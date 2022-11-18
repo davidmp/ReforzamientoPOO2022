@@ -5,6 +5,8 @@
 
 package pe.edu.upeu;
 
+import pe.edu.upeu.gui.MainCalc;
+
 /**
  *
  * @author Lab Software
@@ -13,5 +15,6 @@ public class CalcGUI {
 
     public static void main(String[] args) {
         System.out.println("Hello World!");
+        new MainCalc().setVisible(true);
     }
 }
