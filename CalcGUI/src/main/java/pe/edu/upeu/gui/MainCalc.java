@@ -137,14 +137,48 @@ public class MainCalc extends javax.swing.JFrame implements ActionListener{
     private javax.swing.JTextField txtResult;
     // End of variables declaration//GEN-END:variables
 
+    int valA=0, valB=0;
+    char oper=' ';    
     @Override
     public void actionPerformed(ActionEvent e) {
         for (int i = 0; i < 20; i++) {
-            if(e.getSource()==boton[i]){
-                String datax=txtResult.getText()+boton[i].getText();
-                txtResult.setText(datax);
-            }
-            
+            if(e.getSource()==boton[i]){                   
+                operador(boton[i].getText());
+            }            
         }
     }
+    
+    public void operador(String data){
+    if(data.equals("+") || data.equals("-") || data.equals("*") 
+            || data.equals("/") || data.equals("%")){
+            valA=Integer.parseInt(txtResult.getText());
+            txtResult.setText("");
+            oper=data.charAt(0);
+        }else if(data.equals("AC") || data.equals("C")){
+            valA=0;
+            valB=0;
+            oper=' ';
+            
+        }else if(data.charAt(0)=='='){
+            operResultado(data);           
+        }else{
+                String datax=txtResult.getText()+data;
+                txtResult.setText(datax);
+                //operador(data);        
+        }
+    }    
+    public void operResultado(String operResult){
+        System.out.println("V"+operResult);
+        valB=Integer.parseInt(txtResult.getText());
+        switch (oper) {
+            case '+': txtResult.setText(String.valueOf( valA+valB));  break;
+            case '-': txtResult.setText(String.valueOf( valA-valB)); break;
+            case '*': txtResult.setText(String.valueOf( valA*valB)); break;
+            case '/': txtResult.setText(String.valueOf( valA/valB)); break;
+            case '%': txtResult.setText(String.valueOf( valA%valB)); break;
+            default: System.err.println("Error");
+        }
+    }
+    
+    
 }
