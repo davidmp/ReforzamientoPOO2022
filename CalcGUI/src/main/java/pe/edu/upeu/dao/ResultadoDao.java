@@ -30,6 +30,7 @@ public class ResultadoDao implements ResultadoDaoI{
                to.setNum2(rs.getInt("num2"));
                to.setOperador(rs.getString("operador"));
                to.setResult(rs.getDouble("result"));
+               lista.add(to);
             }
             
         } catch (Exception e) {

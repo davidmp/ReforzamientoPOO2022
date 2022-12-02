@@ -9,7 +9,14 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JButton;
+import javax.swing.table.DefaultTableModel;
+import pe.edu.upeu.dao.ResultadoDao;
+import pe.edu.upeu.dao.ResultadoDaoI;
+import pe.edu.upeu.modelo.ResultadoTO;
 
 /**
  *
@@ -29,6 +36,7 @@ public class MainCalc extends javax.swing.JFrame implements ActionListener{
         jPanelButton.setLayout(new BorderLayout());
         jPanelButton.setLayout(new GridLayout(5, 4));
         btnInicio();
+        listarREsultados();
     }
     
     public void btnInicio(){
@@ -49,6 +57,8 @@ public class MainCalc extends javax.swing.JFrame implements ActionListener{
         txtResult = new javax.swing.JTextField();
         jPanelButton = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -90,15 +100,31 @@ public class MainCalc extends javax.swing.JFrame implements ActionListener{
 
         jPanel2.setBackground(new java.awt.Color(204, 255, 255));
 
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Num1", "Num2", "Operador", "Resultado"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 367, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -134,6 +160,8 @@ public class MainCalc extends javax.swing.JFrame implements ActionListener{
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanelButton;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     private javax.swing.JTextField txtResult;
     // End of variables declaration//GEN-END:variables
 
@@ -171,14 +199,43 @@ public class MainCalc extends javax.swing.JFrame implements ActionListener{
         System.out.println("V"+operResult);
         valB=Integer.parseInt(txtResult.getText());
         switch (oper) {
-            case '+': txtResult.setText(String.valueOf( valA+valB));  break;
-            case '-': txtResult.setText(String.valueOf( valA-valB)); break;
-            case '*': txtResult.setText(String.valueOf( valA*valB)); break;
-            case '/': txtResult.setText(String.valueOf( valA/valB)); break;
-            case '%': txtResult.setText(String.valueOf( valA%valB)); break;
+            case '+': txtResult.setText(String.valueOf( valA+valB));registrarOperacion();  break;
+            case '-': txtResult.setText(String.valueOf( valA-valB));registrarOperacion(); break;
+            case '*': txtResult.setText(String.valueOf( valA*valB));registrarOperacion(); break;
+            case '/': txtResult.setText(String.valueOf( valA/valB));registrarOperacion(); break;
+            case '%': txtResult.setText(String.valueOf( valA%valB));registrarOperacion(); break;
             default: System.err.println("Error");
         }
     }
     
+    public void  registrarOperacion(){
+        ResultadoTO to=new ResultadoTO();
+        to.setNum1(valA);
+        to.setNum2(valB);
+        to.setOperador(String.valueOf(oper));
+        to.setResult(Double.parseDouble(txtResult.getText()));
+        ResultadoDaoI dao=new ResultadoDao();
+        dao.crearResultado(to);
+        listarREsultados();
+    }
+    
+    DefaultTableModel model;
+    
+    public void listarREsultados(){
+        ResultadoDaoI dao=new ResultadoDao();
+        List<ResultadoTO> lista=dao.listarResultados();
+        model=(DefaultTableModel)jTable1.getModel();
+        model.setNumRows(0);
+        Object[] ob=new Object[5];
+        for (int i = 0; i < lista.size(); i++) {
+            int x=-1;
+            ob[++x]=lista.get(i).getIdResultado();
+            ob[++x]=lista.get(i).getNum1();
+            ob[++x]=lista.get(i).getNum2();
+            ob[++x]=lista.get(i).getOperador();
+            ob[++x]=lista.get(i).getResult();
+            model.addRow(ob);
+        }                
+    }
     
 }
